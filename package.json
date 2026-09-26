@@ -3,18 +3,31 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:sandbox": "wrangler pages dev dist --d1=webapp-production --local --ip 0.0.0.0 --port 3000",
     "build": "vite build",
-    "preview": "wrangler pages dev",
-    "deploy": "npm run build && wrangler pages deploy",
+    "preview": "wrangler pages dev dist",
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "deploy:prod": "npm run build && wrangler pages deploy dist --project-name webapp",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate:local": "wrangler d1 migrations apply webapp-production --local",
+    "db:migrate:prod": "wrangler d1 migrations apply webapp-production",
+    "db:reset": "rm -rf .wrangler/state/v3/d1 && npm run db:migrate:local",
+    "db:console:local": "wrangler d1 execute webapp-production --local",
+    "clean-port": "fuser -k 3000/tcp 2>/dev/null || true",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
     "hono": "^4.13.8"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260926.1",
     "@hono/vite-build": "^1.11.1",
     "@hono/vite-dev-server": "^0.26.1",
+    "@types/better-sqlite3": "^9.6.0",
+    "better-sqlite3": "^13.0.3",
     "vite": "^8.1.4",
+    "vitest": "^5.0.2",
     "wrangler": "^4.110.0"
   }
 }
