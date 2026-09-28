@@ -81,6 +81,6 @@ export function nextStateAfterStatus(outcome: ProviderStatusOutcome): PayoutStat
 /** Exponential backoff schedule for reconciliation (§13.2), capped. */
 export function reconcileBackoffSeconds(attempt: number): number {
   const base = 30
-  const capped = Math.min(attempt, 8)
-  return Math.min(base * 2 ** capped, 6 * 3600)
+  const exp = Math.min(Math.max(attempt, 0), 20)
+  return Math.min(base * 2 ** exp, 6 * 3600)
 }
