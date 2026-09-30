@@ -213,10 +213,11 @@ api.post('/ops/payouts/:id/process', async (c) => {
   return c.json(await payouts.process(Number(c.req.param('id'))))
 })
 
-/** ReconcilePayout sweep */
+/** ReconcilePayout sweep. Operator-triggered sweeps bypass the backoff schedule (?force=1, default on). */
 api.post('/ops/reconcile', async (c) => {
   const { payouts } = c.get('svc')
-  return c.json({ reconciled: await payouts.reconcileDue() })
+  const force = c.req.query('force') !== '0'
+  return c.json({ force, reconciled: await payouts.reconcileDue({ force }) })
 })
 
 /** Recognize revenue as of the current clock (normally done lazily in prepare) */

@@ -246,7 +246,12 @@ export class PayoutService {
 
   // ------------------------------------------------------------------ RECONCILE
 
-  async reconcileDue(limit = 200): Promise<Array<{ payoutId: number; after: PayoutStatus; note: string }>> {
+  /**
+   * Sweep VERIFY payouts whose backoff has elapsed plus stale PROCESSING payouts (§13.2).
+   * `force` ignores the backoff schedule - used for operator-initiated sweeps from the ops console.
+   */
+  async reconcileDue(opts: { limit?: number; force?: boolean } = {}): Promise<Array<{ payoutId: number; after: PayoutStatus; note: string }>> {
+    const limit = opts.limit ?? 200
     const now = await this.clock.now()
     const staleRow = await this.db.first<{ value: string }>(`SELECT value FROM settings WHERE key = 'processing_stale_seconds'`)
     const staleSeconds = Number(staleRow?.value ?? 300)
@@ -254,10 +259,10 @@ export class PayoutService {
 
     const due = await this.db.all<PayoutRow>(
       `SELECT * FROM payouts
-       WHERE (status = 'VERIFY' AND (next_check_at IS NULL OR next_check_at <= ?))
+       WHERE (status = 'VERIFY' AND (? = 1 OR next_check_at IS NULL OR next_check_at <= ?))
           OR (status = 'PROCESSING' AND processing_started_at IS NOT NULL AND processing_started_at <= ?)
        ORDER BY id LIMIT ?`,
-      [now.toISOString(), staleBefore, limit]
+      [opts.force ? 1 : 0, now.toISOString(), staleBefore, limit]
     )
     const out = []
     for (const p of due) out.push({ payoutId: p.id, ...(await this.reconcileOne(p)) })
