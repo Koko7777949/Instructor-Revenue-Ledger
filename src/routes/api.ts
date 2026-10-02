@@ -158,7 +158,18 @@ api.get('/payments/:id', async (c) => {
 api.get('/events', async (c) => {
   const { db } = c.get('svc')
   const limit = Math.min(Number(c.req.query('limit') ?? 100), 500)
-  const rows = await db.all(`SELECT * FROM ledger_events ORDER BY id DESC LIMIT ?`, [limit])
+  const where: string[] = []
+  const params: (string | number)[] = []
+  const payoutId = c.req.query('payoutId')
+  const instructorId = c.req.query('instructorId')
+  const event = c.req.query('event')
+  if (payoutId) { where.push('payout_id = ?'); params.push(Number(payoutId)) }
+  if (instructorId) { where.push('instructor_id = ?'); params.push(Number(instructorId)) }
+  if (event) { where.push('event = ?'); params.push(event) }
+  const rows = await db.all(
+    `SELECT * FROM ledger_events ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY id DESC LIMIT ?`,
+    [...params, limit]
+  )
   return c.json({ events: rows })
 })
 

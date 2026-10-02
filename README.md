@@ -58,7 +58,7 @@ Faithful port of the *Instructor Revenue Ledger – Engineering Documentation Pa
 | `GET /api/instructors` · `GET /api/instructors/:id` | Balance snapshot rows / allocations + payouts for one instructor |
 | `GET /api/payouts?status=&from=&to=&instructor=&limit=` · `GET /api/payouts/:id` | Payout history / full drill-down (`items`, `events`, `providerRecord`) |
 | `GET /api/payments` · `GET /api/payments/:id` | Payment facts / allocation split + refunds |
-| `GET /api/events?limit=` | Audit log |
+| `GET /api/events?limit=&payoutId=&instructorId=&event=` | Audit log (filterable) |
 | `GET /api/integrity` | Invariant checks; `ok: true` means no drift |
 | `GET /api/plans` · `GET /api/students` | Reference data |
 
@@ -119,6 +119,6 @@ npm test                              # 73 vitest tests (unit + DB-backed featur
 - **Platform**: Cloudflare Pages + D1
 - **Status**: ✅ Running in sandbox (local D1) · ❌ Not yet deployed to production
 - **Tech Stack**: Hono 4 · TypeScript · Cloudflare D1 · Vite · Vitest + better-sqlite3 · Tailwind (CDN) · vanilla JS SPA
-- **Last Updated**: 2026-09-30
+- **Last Updated**: 2026-10-02
 
 See `docs/ARCHITECTURE.md` for the design → code mapping and `docs/AI_USAGE.md` for the disclosure.
