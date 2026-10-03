@@ -20,6 +20,7 @@ Faithful port of the *Instructor Revenue Ledger – Engineering Documentation Pa
 ## URLs
 - **Sandbox preview**: https://3000-inxh5xzdct5yymr8gfl0j-5185f4aa.sandbox.novita.ai
 - **Health**: `GET /api/health`
+- **GitHub**: https://github.com/Koko7777949/Instructor-Revenue-Ledger
 - **Production**: not yet deployed (see *Deployment*)
 
 ## Currently Completed Features
